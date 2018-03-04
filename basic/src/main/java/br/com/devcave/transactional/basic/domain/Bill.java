@@ -11,10 +11,12 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class Bill {
+
     @Id
     @GeneratedValue
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private TypeEnum type;
 
     private BigDecimal value;

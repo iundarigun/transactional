@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"document"}))
 @NoArgsConstructor
 public class User {
 
@@ -19,14 +20,14 @@ public class User {
 
     private String name;
 
-    private LocalDate born;
+    private String document;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Bill> billList = new ArrayList<>();
 
-    public User(String name, LocalDate born, List<Bill> billList) {
+    public User(String name, String document, List<Bill> billList) {
         this.name = name;
-        this.born = born;
+        this.document = document;
         this.billList = billList;
         this.billList.forEach(b -> b.setUser(this));
     }
