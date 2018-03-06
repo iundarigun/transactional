@@ -1,16 +1,18 @@
 package br.com.devcave.transactional.basic.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Data
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"document"}))
 @NoArgsConstructor
 public class User {
 
@@ -20,6 +22,7 @@ public class User {
 
     private String name;
 
+    @Column(unique = true)
     private String document;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
