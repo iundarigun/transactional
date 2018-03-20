@@ -3,6 +3,7 @@ package br.com.devcave.transactional.advanced.service;
 import br.com.devcave.transactional.advanced.domain.Bill;
 import br.com.devcave.transactional.advanced.domain.TypeEnum;
 import br.com.devcave.transactional.advanced.domain.User;
+import br.com.devcave.transactional.advanced.exception.TransactionalException;
 import br.com.devcave.transactional.advanced.repository.UserRepository;
 import br.com.devcave.transactional.advanced.vo.BillVO;
 import com.github.javafaker.Faker;
@@ -22,6 +23,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ValidationService validationService;
 
     @Transactional(readOnly = true)
     public Double getTotalAmount() {
@@ -61,22 +65,10 @@ public class UserService {
                 d, Collections.emptyList())));
     }
 
-
     @Transactional
-    public void addBillsCheckedException(Long id, List<BillVO> billList) throws Exception {
+    public void addBillsCheckedException(Long id, List<BillVO> billList) throws TransactionalException {
         User user = userRepository.getOne(id);
-        for(BillVO billVO:billList){
-            validateBillWithCheckedException(billVO);
-            user.getBillList().add(
-                    new Bill(billVO.getType(),
-                    billVO.getValue(), billVO.getDate(), user));
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void addBillsCheckedExceptionWithRollback(Long id, List<BillVO> billList) throws Exception {
-        User user = userRepository.getOne(id);
-        for(BillVO billVO:billList){
+        for (BillVO billVO : billList) {
             validateBillWithCheckedException(billVO);
             user.getBillList().add(
                     new Bill(billVO.getType(),
@@ -84,17 +76,27 @@ public class UserService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void addBillsCheckedExceptionWithRollback(Long id, List<BillVO> billList) throws TransactionalException {
+        User user = userRepository.getOne(id);
+        for (BillVO billVO : billList) {
+            validateBillWithCheckedException(billVO);
+            user.getBillList().add(
+                    new Bill(billVO.getType(),
+                            billVO.getValue(), billVO.getDate(), user));
+        }
+    }
 
-    public void validateBillWithCheckedException(BillVO bill) throws Exception {
-        if (bill.getDate().isAfter(LocalDate.now())){
-            throw new Exception();
+    private void validateBillWithCheckedException(BillVO bill) throws TransactionalException {
+        if (bill.getDate().isAfter(LocalDate.now())) {
+            throw new TransactionalException();
         }
     }
 
     @Transactional
     public void addBillsUncheckedException(Long id, List<BillVO> billList) {
         User user = userRepository.getOne(id);
-        for(BillVO billVO:billList){
+        for (BillVO billVO : billList) {
             validateBillWithUncheckedException(billVO);
             user.getBillList().add(
                     new Bill(billVO.getType(),
@@ -102,10 +104,39 @@ public class UserService {
         }
     }
 
-    public void validateBillWithUncheckedException(BillVO bill) {
-        if (bill.getDate().isAfter(LocalDate.now())){
+    @Transactional
+    public void addBillsCatchingPrivateUncheckedException(final Long id, final List<BillVO> billList) {
+        User user = userRepository.getOne(id);
+        for (BillVO billVO : billList) {
+            try {
+                validateBillWithUncheckedException(billVO);
+                user.getBillList().add(
+                        new Bill(billVO.getType(),
+                                billVO.getValue(), billVO.getDate(), user));
+            } catch (RuntimeException e) {
+                log.error("A fatura esta errada");
+            }
+        }
+    }
+
+    private void validateBillWithUncheckedException(BillVO bill) {
+        if (bill.getDate().isAfter(LocalDate.now())) {
             throw new RuntimeException();
         }
     }
 
+    @Transactional
+    public void addBillsCatchingProxyUncheckedException(final Long id, final List<BillVO> billList) {
+        User user = userRepository.getOne(id);
+        for (BillVO billVO : billList) {
+            try {
+                validationService.validateBillWithUncheckedException(billVO);
+                user.getBillList().add(
+                        new Bill(billVO.getType(),
+                                billVO.getValue(), billVO.getDate(), user));
+            } catch (RuntimeException e) {
+                log.error("A fatura esta errada");
+            }
+        }
+    }
 }
