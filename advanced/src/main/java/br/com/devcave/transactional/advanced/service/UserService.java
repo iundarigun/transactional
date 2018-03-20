@@ -4,6 +4,7 @@ import br.com.devcave.transactional.advanced.domain.Bill;
 import br.com.devcave.transactional.advanced.domain.TypeEnum;
 import br.com.devcave.transactional.advanced.domain.User;
 import br.com.devcave.transactional.advanced.exception.TransactionalException;
+import br.com.devcave.transactional.advanced.repository.BillRepository;
 import br.com.devcave.transactional.advanced.repository.UserRepository;
 import br.com.devcave.transactional.advanced.vo.BillVO;
 import com.github.javafaker.Faker;
@@ -15,6 +16,7 @@ import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -25,7 +27,13 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
     private ValidationService validationService;
+
+    @Autowired
+    private UserService userService;
 
     @Transactional(readOnly = true)
     public Double getTotalAmount() {
@@ -138,5 +146,30 @@ public class UserService {
                 log.error("A fatura esta errada");
             }
         }
+    }
+
+    @Transactional
+    public void addBillsNewTransactionInThisClass(final Long id, final List<BillVO> billList) {
+        User user = userRepository.getOne(id);
+        for (BillVO billVO : billList) {
+            createBill(billVO, user);
+        }
+        throw new RuntimeException();
+    }
+
+    @Transactional
+    public void addBillsNewTransactionByProxy(final Long id, final List<BillVO> billList) {
+        User user = userRepository.getOne(id);
+        for (BillVO billVO : billList) {
+            userService.createBill(billVO, user);
+        }
+        throw new RuntimeException();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createBill(BillVO billVO, User user) {
+        final Bill bill = new Bill(billVO.getType(),
+                billVO.getValue(), billVO.getDate(), user);
+        billRepository.save(bill);
     }
 }

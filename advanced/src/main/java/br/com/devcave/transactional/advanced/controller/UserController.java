@@ -73,4 +73,14 @@ public class UserController {
     public void addBillsCatchingProxyUncheckedException(@PathVariable Long id, @RequestBody List<BillVO> billList) {
         userService.addBillsCatchingProxyUncheckedException(id, billList);
     }
+
+    @PostMapping("/{id}/addBillsNewTransactionInThisClass")
+    public void addBillsNewTransactionInThisClass(@PathVariable Long id, @RequestBody List<BillVO> billList) {
+        userService.addBillsNewTransactionInThisClass(id, billList);
+    }
+
+    @PostMapping("/{id}/addBillsNewTransactionByProxy")
+    public void addBillsNewTransactionByProxy(@PathVariable Long id, @RequestBody List<BillVO> billList) {
+        userService.addBillsNewTransactionByProxy(id, billList);
+    }
 }
