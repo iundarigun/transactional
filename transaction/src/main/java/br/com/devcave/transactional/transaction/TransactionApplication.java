@@ -30,10 +30,10 @@ import java.util.stream.IntStream;
 @SpringBootApplication
 @EnableSwagger2
 @Controller
-public class BasicApplication {
+public class TransactionApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BasicApplication.class, args);
+        SpringApplication.run(TransactionApplication.class, args);
     }
 
 

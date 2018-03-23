@@ -31,10 +31,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @Controller
-public class BasicApplication {
+public class LockApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BasicApplication.class, args);
+        SpringApplication.run(LockApplication.class, args);
     }
 
 
