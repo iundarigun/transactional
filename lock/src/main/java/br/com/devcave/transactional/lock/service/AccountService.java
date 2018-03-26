@@ -19,19 +19,15 @@ public class AccountService {
     public void addValue(final Long userId, final BigDecimal value) {
         log.info("M=addValue, inicio");
         final Account account = accountRepository.findByUser_id(userId);
-        log.info("M=addValue, apos consulta");
         account.setAmount(account.getAmount().add(value));
-        log.info("M=addValue, final");
     }
 
     @Transactional
     public void addSlowValue(final Long userId, final BigDecimal value) throws InterruptedException {
         log.info("M=addSlowValue, inicio");
         final Account account = accountRepository.findByUser_id(userId);
-        log.info("M=addSlowValue, apos consulta");
         account.setAmount(account.getAmount().add(value));
         Thread.sleep(10_000);
-        log.info("M=addSlowValue, final");
     }
 
 }
