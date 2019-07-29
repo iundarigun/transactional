@@ -20,6 +20,7 @@ public class AccountService {
         log.info("M=addValue, inicio");
         final Account account = accountRepository.findByUser_id(userId);
         account.setAmount(account.getAmount().add(value));
+        log.info("M=addValue, fim");
     }
 
     @Transactional
@@ -28,6 +29,7 @@ public class AccountService {
         final Account account = accountRepository.findByUser_id(userId);
         account.setAmount(account.getAmount().add(value));
         Thread.sleep(10_000);
+        log.info("M=addSlowValue, fim");
     }
 
 }

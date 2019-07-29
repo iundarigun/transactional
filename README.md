@@ -1,9 +1,9 @@
 # transactional
 Repositorio para ilustrar diferentes abordagens sobre controle transacional
 
-sudo docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql-local -d mysql
+docker run --name local-postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
 
-docker exec -it mysql-local mysql -uroot -proot
+docker exec -it local-postgres psql -U postgres
 
 create database devcave_transactional;
 

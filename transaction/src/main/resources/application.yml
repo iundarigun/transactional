@@ -2,12 +2,20 @@ server:
   port: 8081
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/devcave_transactional?useSSL=false
-    username: root
-    password: root
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/devcave_transactional
+    username: postgres
+    password: postgres
   jpa:
     hibernate:
       ddl-auto: 'create-drop'
+      dialect: 'org.hibernate.dialect.PostgreSQLDialect'
     show-sql: true
     open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        temp:
+          use_jdbc_metadata_defaults: false

@@ -149,6 +149,22 @@ public class UserService {
     }
 
     @Transactional
+    public void addBillsCatchingProxyUncheckedExceptionWithoutRollback(final Long id, final List<BillVO> billList) {
+        User user = userRepository.getOne(id);
+        for (BillVO billVO : billList) {
+            try {
+                validationService.validateBillWithUncheckedExceptionWithoutRollback(billVO);
+                user.getBillList().add(
+                        new Bill(billVO.getType(),
+                                billVO.getValue(), billVO.getDate(), user));
+            } catch (RuntimeException e) {
+                log.error("A fatura esta errada");
+            }
+        }
+    }
+
+
+    @Transactional
     public void addBillsNewTransactionInThisClass(final Long id, final List<BillVO> billList) {
         User user = userRepository.getOne(id);
         for (BillVO billVO : billList) {

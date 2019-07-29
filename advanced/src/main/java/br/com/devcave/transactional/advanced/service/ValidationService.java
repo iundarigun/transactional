@@ -14,4 +14,11 @@ public class ValidationService {
             throw new RuntimeException();
         }
     }
+
+    @Transactional(noRollbackFor = RuntimeException.class)
+    public void validateBillWithUncheckedExceptionWithoutRollback(BillVO bill) {
+        if (bill.getDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException();
+        }
+    }
 }

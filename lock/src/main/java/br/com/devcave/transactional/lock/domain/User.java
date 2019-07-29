@@ -9,11 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Table(name="\"user\"")
 @NoArgsConstructor
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "billList" })
 public class User {
